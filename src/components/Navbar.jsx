@@ -3,19 +3,18 @@ import {
   AppBar,
   Toolbar,
   Typography,
+  Button,
+  Stack,
   IconButton,
   Drawer,
   List,
   ListItem,
   ListItemText,
-  Button,
   Box,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
 
-const sections = [
+const navItems = [
   { id: "home", label: "Home" },
   { id: "services", label: "Services" },
   { id: "portfolio", label: "Portfolio" },
@@ -23,15 +22,57 @@ const sections = [
   { id: "contact", label: "Contact" },
 ];
 
-export default function Navbar({ mode, toggleMode }) {
+export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  const LinkButtons = ({ closeDrawer = () => {} }) => (
+    <>
+      {navItems.map(({ id, label }) => (
+        <Button
+          key={id}
+          component="a"
+          href={`#${id}`}
+          onClick={closeDrawer}
+          sx={{
+            color: "white",
+            textTransform: "none",
+            fontSize: "1rem", // slightly larger font
+            fontWeight: 500,
+            position: "relative",
+            "&:after": {
+              content: '""',
+              position: "absolute",
+              left: 0,
+              bottom: -4,
+              width: 0,
+              height: 2,
+              backgroundColor: "#ca2c2c",
+              transition: "width .3s ease",
+            },
+            "&:hover": {
+              color: "white",
+              "&:after": { width: "100%" },
+            },
+          }}
+        >
+          {label}
+        </Button>
+      ))}
+    </>
+  );
+
   const drawer = (
-    <Box sx={{ width: 250 }} onClick={() => setOpen(false)}>
+    <Box sx={{ width: 250, p: 2 }} role="presentation">
       <List>
-        {sections.map((s) => (
-          <ListItem key={s.id} button component="a" href={`#${s.id}`}>
-            <ListItemText primary={s.label} />
+        {navItems.map(({ id, label }) => (
+          <ListItem
+            button
+            key={id}
+            component="a"
+            href={`#${id}`}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemText primary={label} />
           </ListItem>
         ))}
       </List>
@@ -39,46 +80,58 @@ export default function Navbar({ mode, toggleMode }) {
   );
 
   return (
-    <AppBar position="fixed" color="default" elevation={0} className="navbar">
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Typography
-          variant="h6"
-          component="a"
-          href="#home"
-          className="logo"
-          sx={{ textDecoration: "none" }}
-        >
-          Camp &amp; Fire
-        </Typography>
+    <>
+      <AppBar
+        position="fixed"
+        elevation={0}
+        sx={{
+          background: "rgba(0,0,0,0.45)",
+          backdropFilter: "blur(10px)",
+          height: 80, // standard navbar height
+          px: 3,
+          zIndex: (t) => t.zIndex.drawer + 1,
+        }}
+      >
+        <Toolbar sx={{ height: 80, justifyContent: "space-between" }}>
+          {/* Logo */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography
+              variant="h5"
+              component="a"
+              href="#home"
+              sx={{
+                textDecoration: "none",
+                color: "white",
+                fontWeight: 700,
+                fontSize: "1.6rem", // enhanced size
+              }}
+            >
+              Camp & Fire
+            </Typography>
+          </Box>
 
-        <Box
-          sx={{ display: { xs: "none", md: "flex" }, gap: 3 }}
-          className="all-links"
-        >
-          {sections.map((s) => (
-            <Button key={s.id} href={`#${s.id}`} sx={{ fontWeight: 600 }}>
-              {s.label}
-            </Button>
-          ))}
-        </Box>
+          {/* Desktop nav */}
+          <Stack
+            direction="row"
+            spacing={3}
+            sx={{ display: { xs: "none", md: "flex" } }}
+          >
+            <LinkButtons />
+          </Stack>
 
-        <Box>
-          <IconButton color="inherit" onClick={toggleMode}>
-            {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton>
+          {/* Mobile menu */}
           <IconButton
-            sx={{ display: { md: "none" } }}
+            sx={{ color: "white", display: { md: "none" } }}
             onClick={() => setOpen(true)}
-            color="inherit"
           >
             <MenuIcon />
           </IconButton>
-        </Box>
-      </Toolbar>
+        </Toolbar>
+      </AppBar>
 
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         {drawer}
       </Drawer>
-    </AppBar>
+    </>
   );
 }
