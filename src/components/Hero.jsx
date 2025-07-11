@@ -19,7 +19,7 @@ export default function Hero() {
         backgroundImage: `linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url(${heroBg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        backgroundRepeat: " cover no-repeat",
       }}
     >
       {/* inner content box keeps original classes if you still rely on CSS */}
